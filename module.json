@@ -2,7 +2,7 @@
   "id": "obojima-brewing-pf2e",
   "title": "Obojima-Style Brewing for PF2e",
   "description": "Obojima-style PF2e brewing subsystem with creature harvesting, generated monster parts, and PF2e rule-element bonus support.",
-  "version": "0.37",
+  "version": "0.38",
   "compatibility": {
     "minimum": "12",
     "verified": "13"
