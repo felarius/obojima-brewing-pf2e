@@ -18,5 +18,8 @@
   "styles": [
     "styles/obojima-brewing.css"
   ],
-  "packs": []
+  "packs": [],
+  "url": "https://github.com/felarius/obojima-brewing-pf2e",
+"manifest": "https://raw.githubusercontent.com/felarius/obojima-brewing-pf2e/main/module.json",
+"download": "https://github.com/felarius/obojima-brewing-pf2e/releases/download/v0.38/obojima-brewing-pf2e-v0.38.zip"
 }
