@@ -2990,12 +2990,11 @@ function actorHasAlchemicalCrafting(actor) {
     const isFeatOrFeature = ["feat", "classfeature", "feature"].includes(type) || type.includes("feature");
 
     return (
-  name === "alchemical crafting" ||
-  slug === "alchemical crafting" ||
-  name === "magical crafting" ||
-  slug === "magical crafting"
-)
-      && (isFeatOrFeature || type === "");
+      name === "alchemical crafting" ||
+      slug === "alchemical crafting" ||
+      name === "magical crafting" ||
+      slug === "magical crafting"
+    ) && (isFeatOrFeature || type === "");
   });
   if (hasNamedFeatureOrFeat) return true;
 
@@ -4162,7 +4161,7 @@ function obojimaPrimerJournalContent() {
 <p>When a player attempts to remove either an ingredient or monster part from a defeated creature, they choose <strong>Crafting</strong> or <strong>Survival</strong>. Success transfers the item to the character; failure destroys or spoils the material.</p>
 <h2>Brewing</h2>
 <p>Brewing requires three ingredients, a Crafting check, and access to suitable alchemical equipment such as an Alchemist's Lab, Alchemist's Lab (Expanded), Alchemist's Toolkit, Brewing Kit, Black Cauldron, or other Obojima-compatible custom equipment.</p>
-<p>The module checks whether the brewer has Alchemical Crafting as a skill feat or class feature. Characters lacking formal training may still attempt brewing, but the final result is reduced by one degree of success.</p>
+<p>The module checks whether the brewer has Alchemical Crafting as a skill feat or class feature, or the Magical Crafting skill feat. Characters lacking suitable crafting training may still attempt brewing, but the final result is reduced by one degree of success.</p>
 <h2>Brewing Categories and Products</h2>
 <p>The three hidden ingredient values are totaled. The highest total determines whether the result is Combat, Utility, or Whimsy. Combat results produce bombs, poisons, oils, and similar aggressive consumables. Utility results produce potions, elixirs, foods, oils, and practical consumables. Whimsy results produce custom magical brews inspired by Obojima.</p>
 <p>The module maps the winning total to a product level, then deterministically selects a product of the winning category and level.</p>
@@ -4773,7 +4772,7 @@ class ObojimaBrewingApp extends Application {
         `Crafting Modifier Used: ${craftingMod >= 0 ? "+" : ""}${craftingMod}` +
         `${labBonus ? ` (includes +1 Alchemist's Lab bonus${hasInventoryLab ? "" : " from external lab access"})` : ""}` +
         `${brewingBonuses.checkBonus ? ` (includes ${brewingBonuses.checkBonus >= 0 ? "+" : ""}${brewingBonuses.checkBonus} Obojima brewing item bonus)` : ""}` +
-        `${lacksAlchemicalCrafting ? `<br><strong>Alchemical Crafting missing:</strong> final result will be reduced by one degree of success.` : ""}`
+        `${lacksAlchemicalCrafting ? `<br><strong>Alchemical Crafting or Magical Crafting missing:</strong> final result will be reduced by one degree of success.` : ""}`
     });
     const total = roll.total;
     let degree = 1;
@@ -4868,7 +4867,7 @@ class ObojimaBrewingApp extends Application {
       : `<p>The result is unidentified and the recipe is not learned.</p><p><em>Any hidden brewing complications have been sent privately to the GM.</em></p>`;
     const degreeText = ["Critical Failure", "Failure", "Success", "Critical Success"][degree];
     const alchemicalCraftingPenaltyLine = lacksAlchemicalCrafting
-      ? `<p><strong>Missing Alchemical Crafting:</strong> Result reduced from ${["Critical Failure", "Failure", "Success", "Critical Success"][degreeBeforeAlchemicalCraftingPenalty]} to ${degreeText}.</p>`
+      ? `<p><strong>Missing Alchemical Crafting or Magical Crafting:</strong> Result reduced from ${["Critical Failure", "Failure", "Success", "Critical Success"][degreeBeforeAlchemicalCraftingPenalty]} to ${degreeText}.</p>`
       : "";
     const publicBrewingContent = degree < 2
       ? `<h3>Brewing Complete</h3><p>A potion has been produced and placed in your inventory, but its nature is unidentified.</p>`
@@ -4879,7 +4878,7 @@ class ObojimaBrewingApp extends Application {
     });
     if (degree < 2) {
       const trueDescription = winner === "whimsy" ? final.description : (final.system?.description?.value ?? "");
-      await createGMOnlyMessage(`<h3>GM Brewing Notes</h3><p><strong>Brewing Degree:</strong> ${degreeText}${lacksAlchemicalCrafting ? ` (reduced from ${["Critical Failure", "Failure", "Success", "Critical Success"][degreeBeforeAlchemicalCraftingPenalty]} due to missing Alchemical Crafting)` : ""}</p><p><strong>Baseline Product:</strong> ${final.name}</p><p><strong>Category:</strong> ${winner}; <strong>Value:</strong> ${totals[winner]}; <strong>Product Level:</strong> ${finalLevel}</p>${criticalFailureEffect ? `<p><strong>Created False Potion:</strong> The item is not ${final.name}; it only contains the hidden critical-failure consequence below.</p><p><strong>Critical Failure Potion Consequence:</strong> d20 result ${criticalFailureEffect.index}</p><p>${htmlEscape(criticalFailureEffect.text)}</p>` : `<p><strong>True Effect:</strong></p>${trueDescription}<p><strong>Side Effect:</strong> ${sideEffect ?? "None"}</p>`}`, actor);
+      await createGMOnlyMessage(`<h3>GM Brewing Notes</h3><p><strong>Brewing Degree:</strong> ${degreeText}${lacksAlchemicalCrafting ? ` (reduced from ${["Critical Failure", "Failure", "Success", "Critical Success"][degreeBeforeAlchemicalCraftingPenalty]} due to missing Alchemical Crafting or Magical Crafting)` : ""}</p><p><strong>Baseline Product:</strong> ${final.name}</p><p><strong>Category:</strong> ${winner}; <strong>Value:</strong> ${totals[winner]}; <strong>Product Level:</strong> ${finalLevel}</p>${criticalFailureEffect ? `<p><strong>Created False Potion:</strong> The item is not ${final.name}; it only contains the hidden critical-failure consequence below.</p><p><strong>Critical Failure Potion Consequence:</strong> d20 result ${criticalFailureEffect.index}</p><p>${htmlEscape(criticalFailureEffect.text)}</p>` : `<p><strong>True Effect:</strong></p>${trueDescription}<p><strong>Side Effect:</strong> ${sideEffect ?? "None"}</p>`}`, actor);
     }
     this.slots = [null,null,null];
     this.render();
