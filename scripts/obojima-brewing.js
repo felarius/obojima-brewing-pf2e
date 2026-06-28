@@ -2979,6 +2979,7 @@ function actorHasAlchemicalCrafting(actor) {
 
   // The PF2e system can represent access to alchemical crafting in more than one way:
   //   * the Alchemical Crafting skill feat
+  //   * the Magical Crafting skill feat
   //   * an Alchemical Crafting class feature, most notably on Alchemists
   //   * an Alchemist class item / class slug on the actor
   // Accept any of these so Alchemists do not need to also carry the skill feat item.
@@ -2988,7 +2989,12 @@ function actorHasAlchemicalCrafting(actor) {
     const type = String(item?.type ?? "").toLowerCase();
     const isFeatOrFeature = ["feat", "classfeature", "feature"].includes(type) || type.includes("feature");
 
-    return (name === "alchemical crafting" || slug === "alchemical crafting")
+    return (
+  name === "alchemical crafting" ||
+  slug === "alchemical crafting" ||
+  name === "magical crafting" ||
+  slug === "magical crafting"
+)
       && (isFeatOrFeature || type === "");
   });
   if (hasNamedFeatureOrFeat) return true;
@@ -4744,7 +4750,7 @@ class ObojimaBrewingApp extends Application {
     const level = baseSelection.productLevel;
      const lacksAlchemicalCrafting = !actorHasAlchemicalCrafting(actor);
     if (lacksAlchemicalCrafting) {
-      ui.notifications.warn(`${actor.name} does not have Alchemical Crafting. Brewing will proceed, but the result will be reduced by one degree of success.`);
+      ui.notifications.warn(`${actor.name} does not have Alchemical Crafting or Magical Crafting. Brewing will proceed, but the result will be reduced by one degree of success.`);
     }
     const hasInventoryLab = actorHasAlchemistLab(actor);
     let hasLabAccess = hasInventoryLab;
